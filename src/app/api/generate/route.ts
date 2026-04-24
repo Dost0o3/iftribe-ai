@@ -35,7 +35,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
 
-  const model = clientModel || "anthropic/claude-sonnet-4-20250514";
+  let model = clientModel || "anthropic/claude-sonnet-4-20250514";
+  if (model && !model.includes("/")) {
+    model = `anthropic/${model}`;
+  }
   const maxTokens = clientMaxTokens || 16384;
   const systemPrompt = buildSystemPrompt(framework, template);
 

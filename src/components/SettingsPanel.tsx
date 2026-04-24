@@ -13,6 +13,8 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
+const DEFAULT_MODEL = "anthropic/claude-sonnet-4-20250514";
+
 const MODELS = [
   { id: "anthropic/claude-sonnet-4-20250514", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
   { id: "anthropic/claude-opus-4-20250514", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
@@ -22,12 +24,28 @@ const MODELS = [
   { id: "deepseek/deepseek-chat-v3-0324", name: "DeepSeek V3", badge: "Budget", speed: "Ultra Fast" },
 ];
 
+const MODEL_IDS = new Set(MODELS.map((m) => m.id));
+
+function migrateModelId(stored: string | null): string {
+  if (!stored) return DEFAULT_MODEL;
+  if (MODEL_IDS.has(stored)) return stored;
+  if (!stored.includes("/")) {
+    const prefixed = `anthropic/${stored}`;
+    if (MODEL_IDS.has(prefixed)) {
+      localStorage.setItem("iftribe_model", prefixed);
+      return prefixed;
+    }
+  }
+  localStorage.setItem("iftribe_model", DEFAULT_MODEL);
+  return DEFAULT_MODEL;
+}
+
 export default function SettingsPanel({ onClose }: SettingsPanelProps) {
   const [apiKey, setApiKey] = useState(() =>
     typeof window !== "undefined" ? localStorage.getItem("iftribe_api_key") ?? "" : ""
   );
   const [selectedModel, setSelectedModel] = useState(() =>
-    typeof window !== "undefined" ? localStorage.getItem("iftribe_model") ?? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-sonnet-4-20250514"
+    typeof window !== "undefined" ? migrateModelId(localStorage.getItem("iftribe_model")) : DEFAULT_MODEL
   );
   const [maxTokens, setMaxTokens] = useState(() =>
     typeof window !== "undefined" ? parseInt(localStorage.getItem("iftribe_max_tokens") ?? "16384") : 16384
