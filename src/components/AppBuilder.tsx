@@ -6,7 +6,8 @@ import {
   Group as PanelGroup,
   Separator as PanelResizeHandle,
 } from "react-resizable-panels";
-import { Code, Eye, FolderTree, Crown, Gem, Shield } from "lucide-react";
+import { Code, Eye, FolderTree, Gem, Shield } from "lucide-react";
+import Image from "next/image";
 import ChatPanel from "./ChatPanel";
 import FileExplorer from "./FileExplorer";
 import CodeEditor from "./CodeEditor";
@@ -138,9 +139,9 @@ export default function AppBuilder() {
 
   return (
     <div className="h-screen flex flex-col" style={{ background: "var(--background)" }}>
-      {/* Top Bar - Mafia style header */}
+      {/* Top Bar */}
       <header
-        className="flex items-center justify-between px-5 py-2.5"
+        className="flex items-center justify-between px-5 py-2"
         style={{
           background: "linear-gradient(180deg, var(--panel-bg-elevated) 0%, var(--panel-bg) 100%)",
           borderBottom: "1px solid var(--panel-border)",
@@ -148,50 +149,37 @@ export default function AppBuilder() {
         }}
       >
         <div className="flex items-center gap-3">
-          {/* 3D Logo */}
-          <div
-            className="w-9 h-9 rounded-lg flex items-center justify-center btn-3d"
+          {/* Logo from user's 3D image */}
+          <Image
+            src="/logo.png"
+            alt="IFTribe.AI"
+            width={120}
+            height={40}
+            className="object-contain"
             style={{
-              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
-              boxShadow: "var(--shadow-glow), var(--shadow-md)",
+              filter: "drop-shadow(0 2px 8px rgba(184, 134, 110, 0.15))",
             }}
-          >
-            <Crown size={18} className="text-black" strokeWidth={2.5} />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-base tracking-wide text-shimmer">
-              IFTribe.AI
-            </span>
-            <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>
-              App Builder
-            </span>
-          </div>
+            priority
+          />
         </div>
 
         <div className="flex items-center gap-4">
           {fileCount > 0 && (
             <div
-              className="flex items-center gap-2 px-3 py-1 rounded-md"
-              style={{
-                background: "var(--accent-glow)",
-                border: "1px solid var(--accent-dim)",
-              }}
+              className="flex items-center gap-2 px-3 py-1 rounded-md embossed-plate"
             >
-              <Gem size={12} style={{ color: "var(--accent)" }} />
+              <Gem size={11} style={{ color: "var(--accent)" }} />
               <span className="text-xs font-medium" style={{ color: "var(--accent)" }}>
                 {fileCount} file{fileCount !== 1 ? "s" : ""}
               </span>
             </div>
           )}
-          <div
-            className="flex items-center gap-1.5 px-3 py-1 rounded-md"
-            style={{
-              background: "var(--surface-matte)",
-              border: "1px solid var(--panel-border)",
-            }}
-          >
-            <Shield size={11} style={{ color: "var(--accent-dim)" }} />
-            <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-md embossed-plate">
+            <Shield size={10} style={{ color: "var(--accent-dim)" }} />
+            <span
+              className="text-[10px] uppercase tracking-wider"
+              style={{ color: "var(--text-muted)" }}
+            >
               Powered by Claude
             </span>
           </div>
@@ -215,7 +203,7 @@ export default function AppBuilder() {
         {/* Right: Preview + Code */}
         <Panel defaultSize={70} minSize={30}>
           <div className="flex flex-col h-full">
-            {/* Tabs - 3D styled */}
+            {/* Tabs */}
             <div
               className="flex items-center gap-0"
               style={{
@@ -232,7 +220,7 @@ export default function AppBuilder() {
                     ? "2px solid var(--accent)"
                     : "2px solid transparent",
                   background: rightTab === "preview" ? "var(--accent-glow)" : "transparent",
-                  textShadow: rightTab === "preview" ? "0 0 10px rgba(201,168,76,0.3)" : "none",
+                  textShadow: rightTab === "preview" ? "0 0 12px rgba(184,134,110,0.25)" : "none",
                 }}
               >
                 <Eye size={14} />
@@ -247,7 +235,7 @@ export default function AppBuilder() {
                     ? "2px solid var(--accent)"
                     : "2px solid transparent",
                   background: rightTab === "code" ? "var(--accent-glow)" : "transparent",
-                  textShadow: rightTab === "code" ? "0 0 10px rgba(201,168,76,0.3)" : "none",
+                  textShadow: rightTab === "code" ? "0 0 12px rgba(184,134,110,0.25)" : "none",
                 }}
               >
                 <Code size={14} />
@@ -261,7 +249,6 @@ export default function AppBuilder() {
                 <PreviewPanel files={files} />
               ) : (
                 <PanelGroup orientation="horizontal">
-                  {/* File Explorer */}
                   <Panel defaultSize={25} minSize={15}>
                     <div
                       className="h-full overflow-y-auto"
@@ -295,7 +282,6 @@ export default function AppBuilder() {
 
                   <PanelResizeHandle className="w-1 resize-handle" />
 
-                  {/* Code Editor */}
                   <Panel defaultSize={75} minSize={30}>
                     {selectedFile && files[selectedFile] ? (
                       <CodeEditor
@@ -309,12 +295,7 @@ export default function AppBuilder() {
                         style={{ background: "var(--surface-matte)" }}
                       >
                         <div
-                          className="w-16 h-16 rounded-xl flex items-center justify-center mb-4"
-                          style={{
-                            background: "var(--accent-glow)",
-                            border: "1px solid var(--panel-border)",
-                            boxShadow: "var(--shadow-md)",
-                          }}
+                          className="w-16 h-16 rounded-xl flex items-center justify-center mb-4 embossed-plate"
                         >
                           <Code size={24} style={{ color: "var(--accent-dim)" }} />
                         </div>

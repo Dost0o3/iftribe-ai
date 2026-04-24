@@ -1,53 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  /* Mafia Dark Matte Palette */
-  --background: #08080c;
-  --foreground: #e8e4dd;
-  --panel-bg: #0d0d14;
-  --panel-bg-elevated: #111119;
-  --panel-border: #1a1a28;
-  --panel-border-glow: #2a2035;
+  /* IFTribe Dark Matte Palette — inspired by 3D embossed logo */
+  --background: #07070a;
+  --foreground: #ede8e0;
+  --panel-bg: #0b0b10;
+  --panel-bg-elevated: #0f0f16;
+  --panel-border: #1c1a20;
+  --panel-border-glow: #2e2428;
 
-  /* Gold / Amber accents */
-  --accent: #c9a84c;
-  --accent-hover: #ddbf5f;
-  --accent-dim: #8b7432;
-  --accent-glow: rgba(201, 168, 76, 0.15);
-  --accent-glow-strong: rgba(201, 168, 76, 0.25);
+  /* Rose-gold / Bronze accents (matching logo border) */
+  --accent: #b8866e;
+  --accent-hover: #d4a088;
+  --accent-dim: #8a6050;
+  --accent-deep: #6b473a;
+  --accent-glow: rgba(184, 134, 110, 0.12);
+  --accent-glow-strong: rgba(184, 134, 110, 0.22);
 
   /* Message bubbles */
-  --user-msg: #141420;
-  --ai-msg: #0f0f1a;
+  --user-msg: #12101a;
+  --ai-msg: #0e0c14;
 
   /* Input */
-  --input-bg: #0e0e18;
-  --input-border: #1e1e30;
-  --input-focus: #2a2040;
+  --input-bg: #0c0b12;
+  --input-border: #1e1a24;
+  --input-focus: #2a2030;
 
   /* Tabs */
-  --tab-active: #c9a84c;
-  --tab-inactive: #5a5670;
+  --tab-active: #b8866e;
+  --tab-inactive: #504858;
 
   /* Scrollbar */
-  --scrollbar-bg: #0a0a10;
-  --scrollbar-thumb: #1e1e2e;
+  --scrollbar-bg: #090910;
+  --scrollbar-thumb: #1c1a24;
 
-  /* Matte surface */
-  --surface-matte: #0c0c14;
-  --surface-glass: rgba(14, 14, 24, 0.8);
+  /* Matte surfaces */
+  --surface-matte: #0a0a10;
+  --surface-glass: rgba(12, 11, 18, 0.85);
+  --surface-glossy: linear-gradient(145deg, #111118 0%, #0a0a10 50%, #080810 100%);
 
   /* Text variants */
-  --text-primary: #e8e4dd;
-  --text-secondary: #9992a8;
-  --text-muted: #5a5670;
+  --text-primary: #ede8e0;
+  --text-secondary: #9890a0;
+  --text-muted: #58505e;
 
-  /* 3D shadow layers */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --shadow-glow: 0 0 20px rgba(201, 168, 76, 0.1), 0 0 40px rgba(201, 168, 76, 0.05);
-  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  /* 3D shadow layers — deeper for embossed look */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-glow: 0 0 20px rgba(184, 134, 110, 0.08), 0 0 40px rgba(184, 134, 110, 0.04);
+  --shadow-inset: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  --shadow-emboss: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
@@ -80,34 +83,23 @@ body {
 }
 
 /* Sandpack overrides */
-.sp-wrapper {
-  height: 100% !important;
-}
-.sp-layout {
-  height: 100% !important;
-  border: none !important;
-  background: transparent !important;
-}
-.sp-preview {
-  height: 100% !important;
-}
-.sp-preview-container {
-  height: 100% !important;
-}
-.sp-preview iframe {
-  height: 100% !important;
-}
+.sp-wrapper { height: 100% !important; }
+.sp-layout { height: 100% !important; border: none !important; background: transparent !important; }
+.sp-preview { height: 100% !important; }
+.sp-preview-container { height: 100% !important; }
+.sp-preview iframe { height: 100% !important; }
 
-/* 3D Button base */
+/* 3D Button — embossed style */
 .btn-3d {
   position: relative;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-emboss);
   transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 .btn-3d:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
+  border-color: rgba(184, 134, 110, 0.15);
 }
 .btn-3d:active {
   transform: translateY(1px);
@@ -117,13 +109,13 @@ body {
 /* Glass panel */
 .glass-panel {
   background: var(--surface-glass);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--panel-border);
   box-shadow: var(--shadow-md);
 }
 
-/* Gold glow effect */
-.gold-glow {
+/* Bronze glow effect */
+.bronze-glow {
   box-shadow: var(--shadow-glow);
 }
 
@@ -133,22 +125,16 @@ body {
   box-shadow: var(--shadow-inset);
 }
 
-/* Animated gold border */
-@keyframes borderGlow {
-  0%, 100% { border-color: var(--panel-border); }
-  50% { border-color: var(--accent-dim); }
-}
-
 /* Subtle pulse for generating state */
 @keyframes subtlePulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50% { opacity: 0.6; }
 }
 .animate-subtle-pulse {
   animation: subtlePulse 2s ease-in-out infinite;
 }
 
-/* Text shimmer for branding */
+/* Bronze shimmer text */
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -156,24 +142,35 @@ body {
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    var(--accent-dim) 0%,
+    var(--accent-deep) 0%,
     var(--accent) 25%,
     var(--accent-hover) 50%,
     var(--accent) 75%,
-    var(--accent-dim) 100%
+    var(--accent-deep) 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 5s linear infinite;
 }
 
-/* Resize handle styling */
+/* Resize handle */
 .resize-handle {
   background: var(--panel-border);
-  transition: background 0.2s ease;
+  transition: background 0.3s ease;
 }
 .resize-handle:hover {
   background: var(--accent-dim);
+}
+
+/* Embossed plate effect — mirrors the logo style */
+.embossed-plate {
+  background: linear-gradient(145deg, #161620 0%, #0e0e16 50%, #0a0a12 100%);
+  border: 1px solid rgba(184, 134, 110, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(184, 134, 110, 0.06);
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Crown, Zap, Briefcase } from "lucide-react";
+import { Send, Loader2, Zap, Briefcase } from "lucide-react";
+import Image from "next/image";
 import type { Message } from "@/lib/types";
 
 interface ChatPanelProps {
@@ -83,22 +84,22 @@ export default function ChatPanel({
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && !isGenerating && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            {/* 3D Crown Logo */}
+            {/* Logo Image */}
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5 gold-glow"
+              className="mb-5 bronze-glow rounded-xl overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
                 boxShadow: "var(--shadow-lg), var(--shadow-glow)",
-                border: "1px solid rgba(255,255,255,0.1)",
               }}
             >
-              <Crown size={36} className="text-black" strokeWidth={2} />
+              <Image
+                src="/logo.png"
+                alt="IFTribe.AI"
+                width={200}
+                height={70}
+                className="object-contain"
+                priority
+              />
             </div>
-            <h2
-              className="text-xl font-bold mb-1 tracking-wide text-shimmer"
-            >
-              IFTribe.AI
-            </h2>
             <p
               className="text-[10px] tracking-[0.3em] uppercase mb-1 font-semibold"
               style={{ color: "var(--accent-dim)" }}
@@ -109,7 +110,7 @@ export default function ChatPanel({
               Make an offer I can&apos;t refuse — describe the app you want built.
             </p>
 
-            {/* Suggestion cards with 3D effect */}
+            {/* Suggestion cards with embossed 3D effect */}
             <div className="mt-6 space-y-2.5 w-full max-w-sm">
               {[
                 { icon: "⚡", text: "Build a todo app with drag and drop" },
@@ -122,10 +123,8 @@ export default function ChatPanel({
                     setInput(suggestion.text);
                     textareaRef.current?.focus();
                   }}
-                  className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl text-sm transition-all cursor-pointer btn-3d"
+                  className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl text-sm transition-all cursor-pointer btn-3d embossed-plate"
                   style={{
-                    background: "linear-gradient(135deg, var(--input-bg) 0%, var(--panel-bg-elevated) 100%)",
-                    border: "1px solid var(--panel-border)",
                     color: "var(--text-secondary)",
                   }}
                 >
@@ -151,14 +150,13 @@ export default function ChatPanel({
                   <Zap size={10} style={{ color: "var(--accent)" }} />
                 </div>
               ) : (
-                <div
-                  className="w-5 h-5 rounded flex items-center justify-center"
-                  style={{
-                    background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
-                  }}
-                >
-                  <Crown size={10} className="text-black" />
-                </div>
+                <Image
+                  src="/logo.png"
+                  alt="IFTribe.AI"
+                  width={20}
+                  height={20}
+                  className="rounded object-contain"
+                />
               )}
               <span
                 className="text-[10px] font-bold tracking-[0.15em] uppercase"
@@ -186,14 +184,13 @@ export default function ChatPanel({
         {isGenerating && streamingContent && (
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
-              <div
-                className="w-5 h-5 rounded flex items-center justify-center animate-subtle-pulse"
-                style={{
-                  background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
-                }}
-              >
-                <Crown size={10} className="text-black" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="IFTribe.AI"
+                width={20}
+                height={20}
+                className="rounded object-contain animate-subtle-pulse"
+              />
               <span
                 className="text-[10px] font-bold tracking-[0.15em] uppercase"
                 style={{ color: "var(--accent-hover)" }}
@@ -260,9 +257,7 @@ export default function ChatPanel({
             placeholder="Make me an offer... describe your app"
             rows={1}
             className="flex-1 bg-transparent text-sm resize-none outline-none px-2 py-1.5"
-            style={{
-              color: "var(--text-primary)",
-            }}
+            style={{ color: "var(--text-primary)" }}
             disabled={isGenerating}
           />
           <button
