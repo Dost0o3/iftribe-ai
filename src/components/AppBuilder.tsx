@@ -6,14 +6,19 @@ import {
   Group as PanelGroup,
   Separator as PanelResizeHandle,
 } from "react-resizable-panels";
-import { Code, Eye, FolderTree, Gem, Shield } from "lucide-react";
+import {
+  Code, Eye, FolderTree, Gem, Shield, Download, Plus, Layers,
+} from "lucide-react";
 import Image from "next/image";
 import ChatPanel from "./ChatPanel";
 import FileExplorer from "./FileExplorer";
 import CodeEditor from "./CodeEditor";
 import PreviewPanel from "./PreviewPanel";
+import TemplateSelector from "./TemplateSelector";
 import { parseFilesFromResponse } from "@/lib/file-parser";
-import type { Message } from "@/lib/types";
+import { downloadProjectAsZip } from "@/lib/download";
+import type { Message, Framework, ProjectTemplate } from "@/lib/types";
+import { FRAMEWORKS } from "@/lib/types";
 
 type RightTab = "preview" | "code";
 
@@ -24,6 +29,9 @@ export default function AppBuilder() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const [rightTab, setRightTab] = useState<RightTab>("preview");
+  const [framework, setFramework] = useState<Framework>("react");
+  const [template, setTemplate] = useState<ProjectTemplate | null>(null);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
 
   const handleSendMessage = useCallback(
     async (content: string) => {
@@ -39,6 +47,11 @@ export default function AppBuilder() {
 
       let fullResponse = "";
 
+      const conversationHistory = messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
       try {
         const res = await fetch("/api/generate", {
           method: "POST",
@@ -47,6 +60,10 @@ export default function AppBuilder() {
             message: content,
             existingFiles:
               Object.keys(files).length > 0 ? files : undefined,
+            framework,
+            template,
+            conversationHistory:
+              conversationHistory.length > 0 ? conversationHistory : undefined,
           }),
         });
 
@@ -128,17 +145,36 @@ export default function AppBuilder() {
         setStreamingContent("");
       }
     },
-    [files]
+    [files, framework, template, messages]
   );
 
   function handleFileSave(path: string, content: string) {
     setFiles((prev) => ({ ...prev, [path]: content }));
   }
 
+  function handleTemplateSelect(fw: Framework, tmpl: ProjectTemplate) {
+    setFramework(fw);
+    setTemplate(tmpl);
+    setShowTemplateSelector(false);
+  }
+
+  function handleDownload() {
+    downloadProjectAsZip(files, "iftribe-project");
+  }
+
   const fileCount = Object.keys(files).length;
+  const currentFramework = FRAMEWORKS.find((f) => f.id === framework);
 
   return (
     <div className="h-screen flex flex-col" style={{ background: "var(--background)" }}>
+      {/* Template Selector Modal */}
+      {showTemplateSelector && (
+        <TemplateSelector
+          onSelect={handleTemplateSelect}
+          onClose={() => setShowTemplateSelector(false)}
+        />
+      )}
+
       {/* Top Bar */}
       <header
         className="flex items-center justify-between px-5 py-2"
@@ -148,38 +184,72 @@ export default function AppBuilder() {
           boxShadow: "var(--shadow-md)",
         }}
       >
-        <div className="flex items-center gap-3">
-          {/* Logo from user's 3D image */}
+        <div className="flex items-center gap-4">
           <Image
             src="/logo.png"
             alt="IFTribe.AI"
             width={120}
             height={40}
             className="object-contain"
-            style={{
-              filter: "drop-shadow(0 2px 8px rgba(184, 134, 110, 0.15))",
-            }}
-            priority
+            style={{ filter: "drop-shadow(0 2px 8px rgba(184, 134, 110, 0.15))" }}
+            preload
           />
+
+          {/* Framework Badge */}
+          <div
+            className="flex items-center gap-1.5 px-3 py-1 rounded-md cursor-pointer transition-all btn-3d"
+            style={{
+              background: "var(--accent-glow)",
+              border: "1px solid var(--accent-dim)",
+            }}
+            onClick={() => setShowTemplateSelector(true)}
+          >
+            <Layers size={11} style={{ color: "var(--accent)" }} />
+            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+              {currentFramework?.icon} {currentFramework?.name}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* New Project */}
+          <button
+            onClick={() => setShowTemplateSelector(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer btn-3d"
+            style={{
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+              color: "#000",
+            }}
+          >
+            <Plus size={12} />
+            New
+          </button>
+
+          {/* Download */}
           {fileCount > 0 && (
-            <div
-              className="flex items-center gap-2 px-3 py-1 rounded-md embossed-plate"
+            <button
+              onClick={handleDownload}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer btn-3d embossed-plate"
+              title="Download project"
             >
+              <Download size={12} style={{ color: "var(--accent)" }} />
+              <span className="text-xs" style={{ color: "var(--accent)" }}>Export</span>
+            </button>
+          )}
+
+          {/* File count */}
+          {fileCount > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-md embossed-plate">
               <Gem size={11} style={{ color: "var(--accent)" }} />
               <span className="text-xs font-medium" style={{ color: "var(--accent)" }}>
                 {fileCount} file{fileCount !== 1 ? "s" : ""}
               </span>
             </div>
           )}
+
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-md embossed-plate">
             <Shield size={10} style={{ color: "var(--accent-dim)" }} />
-            <span
-              className="text-[10px] uppercase tracking-wider"
-              style={{ color: "var(--text-muted)" }}
-            >
+            <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
               Powered by Claude
             </span>
           </div>
@@ -188,19 +258,19 @@ export default function AppBuilder() {
 
       {/* Main Content */}
       <PanelGroup orientation="horizontal" className="flex-1">
-        {/* Left: Chat */}
         <Panel defaultSize={30} minSize={20}>
           <ChatPanel
             messages={messages}
             onSendMessage={handleSendMessage}
             isGenerating={isGenerating}
             streamingContent={streamingContent}
+            framework={framework}
+            template={template}
           />
         </Panel>
 
         <PanelResizeHandle className="w-1 resize-handle" />
 
-        {/* Right: Preview + Code */}
         <Panel defaultSize={70} minSize={30}>
           <div className="flex flex-col h-full">
             {/* Tabs */}
@@ -220,7 +290,6 @@ export default function AppBuilder() {
                     ? "2px solid var(--accent)"
                     : "2px solid transparent",
                   background: rightTab === "preview" ? "var(--accent-glow)" : "transparent",
-                  textShadow: rightTab === "preview" ? "0 0 12px rgba(184,134,110,0.25)" : "none",
                 }}
               >
                 <Eye size={14} />
@@ -235,7 +304,6 @@ export default function AppBuilder() {
                     ? "2px solid var(--accent)"
                     : "2px solid transparent",
                   background: rightTab === "code" ? "var(--accent-glow)" : "transparent",
-                  textShadow: rightTab === "code" ? "0 0 12px rgba(184,134,110,0.25)" : "none",
                 }}
               >
                 <Code size={14} />
@@ -243,7 +311,6 @@ export default function AppBuilder() {
               </button>
             </div>
 
-            {/* Tab Content */}
             <div className="flex-1 overflow-hidden">
               {rightTab === "preview" ? (
                 <PreviewPanel files={files} />
@@ -265,10 +332,7 @@ export default function AppBuilder() {
                         }}
                       >
                         <FolderTree size={13} style={{ color: "var(--accent)" }} />
-                        <span
-                          className="text-[10px] font-bold tracking-[0.15em] uppercase"
-                          style={{ color: "var(--text-secondary)" }}
-                        >
+                        <span className="text-[10px] font-bold tracking-[0.15em] uppercase" style={{ color: "var(--text-secondary)" }}>
                           Files
                         </span>
                       </div>
@@ -294,9 +358,7 @@ export default function AppBuilder() {
                         className="flex flex-col items-center justify-center h-full"
                         style={{ background: "var(--surface-matte)" }}
                       >
-                        <div
-                          className="w-16 h-16 rounded-xl flex items-center justify-center mb-4 embossed-plate"
-                        >
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4 embossed-plate">
                           <Code size={24} style={{ color: "var(--accent-dim)" }} />
                         </div>
                         <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>

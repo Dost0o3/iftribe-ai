@@ -3,24 +3,45 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, Zap, Briefcase } from "lucide-react";
 import Image from "next/image";
-import type { Message } from "@/lib/types";
+import type { Message, Framework, ProjectTemplate } from "@/lib/types";
 
 interface ChatPanelProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   isGenerating: boolean;
   streamingContent: string;
+  framework: Framework;
+  template: ProjectTemplate | null;
 }
+
+const SUGGESTIONS: Record<string, Array<{ icon: string; text: string }>> = {
+  default: [
+    { icon: "⚡", text: "Build a todo app with drag and drop" },
+    { icon: "🌤", text: "Create a weather dashboard with charts" },
+    { icon: "🛒", text: "Build an e-commerce product page" },
+    { icon: "💬", text: "Create a real-time chat interface" },
+  ],
+  web3: [
+    { icon: "💰", text: "Build a DeFi token swap interface" },
+    { icon: "🖼️", text: "Create an NFT minting dApp" },
+    { icon: "👛", text: "Build a crypto wallet dashboard" },
+    { icon: "🏛️", text: "Create a DAO voting interface" },
+  ],
+};
 
 export default function ChatPanel({
   messages,
   onSendMessage,
   isGenerating,
   streamingContent,
+  framework,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isWeb3 = framework.startsWith("web3");
+  const currentSuggestions = isWeb3 ? SUGGESTIONS.web3 : SUGGESTIONS.default;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,18 +99,27 @@ export default function ChatPanel({
         >
           Command Center
         </span>
+        {isWeb3 && (
+          <span
+            className="text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full"
+            style={{
+              background: "var(--accent-glow)",
+              color: "var(--accent)",
+              border: "1px solid var(--panel-border)",
+            }}
+          >
+            Web3
+          </span>
+        )}
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && !isGenerating && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            {/* Logo Image */}
             <div
               className="mb-5 bronze-glow rounded-xl overflow-hidden"
-              style={{
-                boxShadow: "var(--shadow-lg), var(--shadow-glow)",
-              }}
+              style={{ boxShadow: "var(--shadow-lg), var(--shadow-glow)" }}
             >
               <Image
                 src="/logo.png"
@@ -97,26 +127,23 @@ export default function ChatPanel({
                 width={200}
                 height={70}
                 className="object-contain"
-                priority
+                preload
               />
             </div>
             <p
               className="text-[10px] tracking-[0.3em] uppercase mb-1 font-semibold"
               style={{ color: "var(--accent-dim)" }}
             >
-              The Don of App Building
+              {isWeb3 ? "Web3 App Builder" : "The Don of App Building"}
             </p>
             <p className="text-sm mt-2 max-w-xs" style={{ color: "var(--text-muted)" }}>
-              Make an offer I can&apos;t refuse — describe the app you want built.
+              {isWeb3
+                ? "Describe the dApp you want — DeFi, NFTs, DAOs, wallets, and more."
+                : "Make an offer I can\u0027t refuse \u2014 describe the app you want built."}
             </p>
 
-            {/* Suggestion cards with embossed 3D effect */}
             <div className="mt-6 space-y-2.5 w-full max-w-sm">
-              {[
-                { icon: "⚡", text: "Build a todo app with drag and drop" },
-                { icon: "🌤", text: "Create a weather dashboard" },
-                { icon: "🧮", text: "Make a calculator with history" },
-              ].map((suggestion) => (
+              {currentSuggestions.map((suggestion) => (
                 <button
                   key={suggestion.text}
                   onClick={() => {
@@ -124,9 +151,7 @@ export default function ChatPanel({
                     textareaRef.current?.focus();
                   }}
                   className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl text-sm transition-all cursor-pointer btn-3d embossed-plate"
-                  style={{
-                    color: "var(--text-secondary)",
-                  }}
+                  style={{ color: "var(--text-secondary)" }}
                 >
                   <span className="text-base">{suggestion.icon}</span>
                   <span>{suggestion.text}</span>
@@ -254,7 +279,7 @@ export default function ChatPanel({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Make me an offer... describe your app"
+            placeholder={isWeb3 ? "Describe your dApp..." : "Make me an offer... describe your app"}
             rows={1}
             className="flex-1 bg-transparent text-sm resize-none outline-none px-2 py-1.5"
             style={{ color: "var(--text-primary)" }}

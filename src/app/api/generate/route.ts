@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts";
+import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
+import type { Framework, ProjectTemplate } from "@/lib/types";
 
 export async function POST(request: Request) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -11,9 +12,18 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { message, existingFiles } = body as {
+  const {
+    message,
+    existingFiles,
+    framework = "react",
+    template = null,
+    conversationHistory,
+  } = body as {
     message: string;
     existingFiles?: Record<string, string>;
+    framework?: Framework;
+    template?: ProjectTemplate | null;
+    conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>;
   };
 
   if (!message) {
@@ -21,17 +31,29 @@ export async function POST(request: Request) {
   }
 
   const client = new Anthropic({ apiKey });
+  const systemPrompt = buildSystemPrompt(framework, template);
+
+  const messages: Anthropic.MessageParam[] = [];
+
+  if (conversationHistory && conversationHistory.length > 0) {
+    for (const msg of conversationHistory.slice(-8)) {
+      messages.push({
+        role: msg.role,
+        content: msg.content,
+      });
+    }
+  }
+
+  messages.push({
+    role: "user",
+    content: buildUserPrompt(message, existingFiles),
+  });
 
   const stream = await client.messages.stream({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 8192,
-    system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: buildUserPrompt(message, existingFiles),
-      },
-    ],
+    max_tokens: 16384,
+    system: systemPrompt,
+    messages,
   });
 
   const encoder = new TextEncoder();
