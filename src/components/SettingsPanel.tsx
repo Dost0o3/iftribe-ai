@@ -13,14 +13,14 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
-const DEFAULT_MODEL = "anthropic/claude-sonnet-4-20250514";
+const DEFAULT_MODEL = "anthropic/claude-sonnet-4";
 
 const MODELS = [
-  { id: "anthropic/claude-sonnet-4-20250514", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
-  { id: "anthropic/claude-opus-4-20250514", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
-  { id: "anthropic/claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
+  { id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
+  { id: "anthropic/claude-opus-4", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
+  { id: "anthropic/claude-3.5-haiku", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
   { id: "openai/gpt-4o", name: "GPT-4o", badge: "OpenAI", speed: "Fast" },
-  { id: "google/gemini-2.5-pro-preview", name: "Gemini 2.5 Pro", badge: "Google", speed: "Fast" },
+  { id: "google/gemini-2.5-pro", name: "Gemini 2.5 Pro", badge: "Google", speed: "Fast" },
   { id: "deepseek/deepseek-chat-v3-0324", name: "DeepSeek V3", badge: "Budget", speed: "Ultra Fast" },
 ];
 
@@ -66,7 +66,7 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
     localStorage.removeItem("iftribe_max_tokens");
     localStorage.removeItem("iftribe_projects");
     setApiKey("");
-    setSelectedModel("anthropic/claude-sonnet-4-20250514");
+    setSelectedModel("anthropic/claude-sonnet-4");
     setMaxTokens(16384);
   }
 

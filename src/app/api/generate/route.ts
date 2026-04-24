@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
 
-  let model = clientModel || "anthropic/claude-sonnet-4-20250514";
+  let model = clientModel || "anthropic/claude-sonnet-4";
   if (model && !model.includes("/")) {
     model = `anthropic/${model}`;
   }
