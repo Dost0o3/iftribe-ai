@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useId, useRef } from "react";
 import { cn } from "@/lib/utils";
 import {
   motion,
@@ -24,6 +24,8 @@ export function InfiniteGrid({
   speed = 0.3,
   gridSize = 40,
 }: InfiniteGridProps) {
+  const instanceId = useId();
+  const patternId = `infinite-grid-${instanceId.replace(/:/g, "")}`;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
@@ -52,13 +54,13 @@ export function InfiniteGrid({
       className={cn("relative overflow-hidden", className)}
     >
       <div className="absolute inset-0 z-0 opacity-[0.04]">
-        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} />
+        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} patternId={patternId} />
       </div>
       <motion.div
         className="absolute inset-0 z-0 opacity-30"
         style={{ maskImage, WebkitMaskImage: maskImage }}
       >
-        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} />
+        <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} size={gridSize} patternId={patternId} />
       </motion.div>
 
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -81,16 +83,18 @@ function GridPattern({
   offsetX,
   offsetY,
   size,
+  patternId,
 }: {
   offsetX: ReturnType<typeof useMotionValue<number>>;
   offsetY: ReturnType<typeof useMotionValue<number>>;
   size: number;
+  patternId: string;
 }) {
   return (
     <svg className="w-full h-full">
       <defs>
         <motion.pattern
-          id="infinite-grid-pattern"
+          id={patternId}
           width={size}
           height={size}
           patternUnits="userSpaceOnUse"
@@ -106,7 +110,7 @@ function GridPattern({
           />
         </motion.pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#infinite-grid-pattern)" />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   );
 }
