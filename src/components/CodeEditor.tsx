@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, FileCode } from "lucide-react";
 
 interface CodeEditorInnerProps {
   filePath: string;
@@ -44,33 +44,57 @@ function CodeEditorInner({ filePath, content, onSave }: CodeEditorInnerProps) {
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "#1e1e1e" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--surface-matte)" }}>
       {/* Toolbar */}
       <div
-        className="flex items-center justify-between px-3 py-2 border-b"
-        style={{ borderColor: "var(--panel-border)", background: "var(--panel-bg)" }}
+        className="flex items-center justify-between px-3 py-2"
+        style={{
+          borderBottom: "1px solid var(--panel-border)",
+          background: "var(--panel-bg-elevated)",
+        }}
       >
-        <span className="text-xs font-mono" style={{ color: "var(--tab-inactive)" }}>
-          {filePath}
-        </span>
+        <div className="flex items-center gap-2">
+          <FileCode size={12} style={{ color: "var(--accent-dim)" }} />
+          <span
+            className="text-xs font-mono"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {filePath}
+          </span>
+          {hasChanges && (
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{
+                background: "var(--accent)",
+                boxShadow: "0 0 4px var(--accent-glow-strong)",
+              }}
+            />
+          )}
+        </div>
         <div className="flex items-center gap-1">
           {hasChanges && (
             <>
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors cursor-pointer"
-                style={{ color: "var(--tab-inactive)" }}
+                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs transition-all cursor-pointer btn-3d"
+                style={{
+                  color: "var(--text-muted)",
+                  background: "var(--panel-bg)",
+                }}
                 title="Discard changes"
               >
-                <RotateCcw size={12} />
+                <RotateCcw size={11} />
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1 px-2 py-1 rounded text-xs text-white transition-colors cursor-pointer"
-                style={{ background: "var(--accent)" }}
+                className="flex items-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer btn-3d"
+                style={{
+                  background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+                  color: "#000",
+                }}
                 title="Save (Ctrl+S)"
               >
-                <Save size={12} />
+                <Save size={11} />
                 Save
               </button>
             </>
@@ -86,8 +110,8 @@ function CodeEditorInner({ filePath, content, onSave }: CodeEditorInnerProps) {
           onKeyDown={handleKeyDown}
           className="absolute inset-0 w-full h-full resize-none p-4 font-mono text-sm leading-6 outline-none"
           style={{
-            background: "#1e1e1e",
-            color: "#d4d4d4",
+            background: "var(--surface-matte)",
+            color: "var(--text-primary)",
             tabSize: 2,
           }}
           spellCheck={false}
