@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --panel-bg: #111111;
+  --panel-border: #2a2a2a;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --user-msg: #1e1e2e;
+  --ai-msg: #161622;
+  --input-bg: #1a1a2e;
+  --input-border: #333355;
+  --tab-active: #6366f1;
+  --tab-inactive: #888;
+  --scrollbar-bg: #1a1a1a;
+  --scrollbar-thumb: #333;
 }
 
 @theme inline {
@@ -12,15 +24,40 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+/* Sandpack overrides */
+.sp-wrapper {
+  height: 100% !important;
+}
+.sp-layout {
+  height: 100% !important;
+  border: none !important;
+  background: transparent !important;
+}
+.sp-preview {
+  height: 100% !important;
+}
+.sp-preview-container {
+  height: 100% !important;
+}
+.sp-preview iframe {
+  height: 100% !important;
 }
