@@ -119,6 +119,30 @@ export async function POST(request: Request) {
             }
           }
         }
+
+        if (buffer.trim()) {
+          const trimmed = buffer.trim();
+          if (trimmed.startsWith("data: ")) {
+            const data = trimmed.slice(6);
+            if (data === "[DONE]") {
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`)
+              );
+            } else {
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ type: "text", content })}\n\n`)
+                  );
+                }
+              } catch {
+                // skip malformed chunks
+              }
+            }
+          }
+        }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Unknown error";
         controller.enqueue(
