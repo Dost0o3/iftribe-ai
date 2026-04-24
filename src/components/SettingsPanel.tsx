@@ -14,9 +14,12 @@ interface SettingsPanelProps {
 }
 
 const MODELS = [
-  { id: "claude-sonnet-4-20250514", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
-  { id: "claude-opus-4-20250514", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
-  { id: "claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
+  { id: "anthropic/claude-sonnet-4-20250514", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
+  { id: "anthropic/claude-opus-4-20250514", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
+  { id: "anthropic/claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
+  { id: "openai/gpt-4o", name: "GPT-4o", badge: "OpenAI", speed: "Fast" },
+  { id: "google/gemini-2.5-pro-preview", name: "Gemini 2.5 Pro", badge: "Google", speed: "Fast" },
+  { id: "deepseek/deepseek-chat-v3-0324", name: "DeepSeek V3", badge: "Budget", speed: "Ultra Fast" },
 ];
 
 export default function SettingsPanel({ onClose }: SettingsPanelProps) {
@@ -24,7 +27,7 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
     typeof window !== "undefined" ? localStorage.getItem("iftribe_api_key") ?? "" : ""
   );
   const [selectedModel, setSelectedModel] = useState(() =>
-    typeof window !== "undefined" ? localStorage.getItem("iftribe_model") ?? "claude-sonnet-4-20250514" : "claude-sonnet-4-20250514"
+    typeof window !== "undefined" ? localStorage.getItem("iftribe_model") ?? "anthropic/claude-sonnet-4-20250514" : "anthropic/claude-sonnet-4-20250514"
   );
   const [maxTokens, setMaxTokens] = useState(() =>
     typeof window !== "undefined" ? parseInt(localStorage.getItem("iftribe_max_tokens") ?? "16384") : 16384
@@ -45,7 +48,7 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
     localStorage.removeItem("iftribe_max_tokens");
     localStorage.removeItem("iftribe_projects");
     setApiKey("");
-    setSelectedModel("claude-sonnet-4-20250514");
+    setSelectedModel("anthropic/claude-sonnet-4-20250514");
     setMaxTokens(16384);
   }
 
@@ -77,14 +80,14 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
             <label className="flex items-center gap-2">
               <Key size={12} className="text-primary" />
               <span className="text-xs font-bold tracking-[0.1em] uppercase text-muted-foreground">
-                Anthropic API Key
+                OpenRouter API Key
               </span>
             </label>
             <Input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-ant-..."
+              placeholder="sk-or-v1-..."
               className="bg-secondary border-border/50 text-foreground placeholder:text-muted-foreground/50"
             />
             <p className="text-[10px] text-muted-foreground/70">
