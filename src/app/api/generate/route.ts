@@ -3,14 +3,6 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
 import type { Framework, ProjectTemplate } from "@/lib/types";
 
 export async function POST(request: Request) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return Response.json(
-      { error: "ANTHROPIC_API_KEY is not configured. Please set it in your environment variables." },
-      { status: 500 }
-    );
-  }
-
   const body = await request.json();
   const {
     message,
@@ -18,17 +10,34 @@ export async function POST(request: Request) {
     framework = "react",
     template = null,
     conversationHistory,
+    apiKey: clientApiKey,
+    model: clientModel,
+    maxTokens: clientMaxTokens,
   } = body as {
     message: string;
     existingFiles?: Record<string, string>;
     framework?: Framework;
     template?: ProjectTemplate | null;
     conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>;
+    apiKey?: string;
+    model?: string;
+    maxTokens?: number;
   };
+
+  const apiKey = clientApiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return Response.json(
+      { error: "No API key configured. Go to Settings and add your Anthropic API key, or set ANTHROPIC_API_KEY in .env.local" },
+      { status: 500 }
+    );
+  }
 
   if (!message) {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
+
+  const model = clientModel || "claude-sonnet-4-20250514";
+  const maxTokens = clientMaxTokens || 16384;
 
   const client = new Anthropic({ apiKey });
   const systemPrompt = buildSystemPrompt(framework, template);
@@ -50,8 +59,8 @@ export async function POST(request: Request) {
   });
 
   const stream = await client.messages.stream({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 16384,
+    model,
+    max_tokens: maxTokens,
     system: systemPrompt,
     messages,
   });

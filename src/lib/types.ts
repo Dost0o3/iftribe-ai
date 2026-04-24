@@ -19,6 +19,7 @@ export interface Project {
   framework: Framework;
   template: ProjectTemplate | null;
   createdAt: number;
+  updatedAt: number;
 }
 
 export type Framework =
@@ -46,14 +47,20 @@ export type ProjectTemplate =
   | "api-dashboard"
   | "chat-app"
   | "social-media"
-  | "crm";
+  | "crm"
+  | "ai-chatbot"
+  | "ai-image-gen"
+  | "ai-agent"
+  | "did-identity"
+  | "dwn-app"
+  | "verifiable-credentials";
 
 export interface TemplateInfo {
   id: ProjectTemplate;
   name: string;
   description: string;
   icon: string;
-  category: "web2" | "web3" | "saas" | "social";
+  category: "web2" | "web3" | "saas" | "social" | "ai" | "web5";
   frameworks: Framework[];
 }
 
@@ -75,11 +82,11 @@ export const FRAMEWORKS: FrameworkInfo[] = [
 
 export const TEMPLATES: TemplateInfo[] = [
   // Web2
-  { id: "blank", name: "Blank Project", description: "Start from scratch", icon: "📄", category: "web2", frameworks: ["react", "vue", "vanilla", "nextjs"] },
+  { id: "blank", name: "Blank Project", description: "Start from scratch — no limits", icon: "📄", category: "web2", frameworks: ["react", "vue", "vanilla", "nextjs"] },
   { id: "landing-page", name: "Landing Page", description: "Marketing page with hero, features, CTA", icon: "🚀", category: "web2", frameworks: ["react", "vue", "vanilla", "nextjs"] },
   { id: "portfolio", name: "Portfolio", description: "Personal portfolio with projects showcase", icon: "🎨", category: "web2", frameworks: ["react", "vue", "vanilla", "nextjs"] },
   { id: "blog", name: "Blog", description: "Blog with posts, categories, comments", icon: "📝", category: "web2", frameworks: ["react", "nextjs"] },
-  { id: "ecommerce", name: "E-Commerce", description: "Product catalog, cart, checkout", icon: "🛒", category: "web2", frameworks: ["react", "nextjs"] },
+  { id: "ecommerce", name: "E-Commerce", description: "Product catalog, cart, checkout flow", icon: "🛒", category: "web2", frameworks: ["react", "nextjs"] },
   // SaaS
   { id: "saas-dashboard", name: "SaaS Dashboard", description: "Admin dashboard with charts, tables, auth", icon: "📊", category: "saas", frameworks: ["react", "nextjs"] },
   { id: "api-dashboard", name: "API Dashboard", description: "API management with keys, usage stats", icon: "🔌", category: "saas", frameworks: ["react", "nextjs"] },
@@ -94,4 +101,12 @@ export const TEMPLATES: TemplateInfo[] = [
   { id: "wallet-app", name: "Wallet App", description: "Crypto wallet with send/receive/history", icon: "👛", category: "web3", frameworks: ["web3-react", "web3-vanilla"] },
   { id: "dao-governance", name: "DAO Governance", description: "Proposals, voting, treasury management", icon: "🏛️", category: "web3", frameworks: ["web3-react", "web3-vanilla"] },
   { id: "token-launchpad", name: "Token Launchpad", description: "Token creation, presale, distribution", icon: "🪙", category: "web3", frameworks: ["web3-react", "web3-vanilla"] },
+  // AI / Web4
+  { id: "ai-chatbot", name: "AI Chatbot", description: "Conversational AI with streaming responses", icon: "🤖", category: "ai", frameworks: ["react", "nextjs", "vanilla"] },
+  { id: "ai-image-gen", name: "AI Image Generator", description: "Text-to-image generation UI", icon: "🎆", category: "ai", frameworks: ["react", "nextjs"] },
+  { id: "ai-agent", name: "AI Agent Dashboard", description: "Multi-agent orchestration & monitoring", icon: "🧠", category: "ai", frameworks: ["react", "nextjs"] },
+  // Web5 / Decentralized Identity
+  { id: "did-identity", name: "DID Identity", description: "Decentralized identity & profile manager", icon: "🆔", category: "web5", frameworks: ["react", "web3-react", "vanilla"] },
+  { id: "dwn-app", name: "DWN App", description: "Decentralized Web Node data storage", icon: "🗄️", category: "web5", frameworks: ["react", "web3-react", "vanilla"] },
+  { id: "verifiable-credentials", name: "Verifiable Credentials", description: "Issue & verify digital credentials", icon: "📜", category: "web5", frameworks: ["react", "web3-react", "vanilla"] },
 ];

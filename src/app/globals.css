@@ -1,86 +1,140 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* IFTribe Dark Matte Palette — inspired by 3D embossed logo */
+  /* IFTribe Dark Matte Palette — mapped to shadcn design tokens */
   --background: #07070a;
   --foreground: #ede8e0;
+  --card: #0b0b10;
+  --card-foreground: #ede8e0;
+  --popover: #0f0f16;
+  --popover-foreground: #ede8e0;
+  --primary: #b8866e;
+  --primary-foreground: #07070a;
+  --secondary: #161620;
+  --secondary-foreground: #ede8e0;
+  --muted: #1c1a20;
+  --muted-foreground: #9890a0;
+  --accent: #b8866e;
+  --accent-foreground: #07070a;
+  --destructive: #e74c3c;
+  --border: #1c1a20;
+  --input: #1e1a24;
+  --ring: #b8866e;
+  --radius: 0.625rem;
+
+  /* IFTribe custom vars */
   --panel-bg: #0b0b10;
   --panel-bg-elevated: #0f0f16;
   --panel-border: #1c1a20;
   --panel-border-glow: #2e2428;
-
-  /* Rose-gold / Bronze accents (matching logo border) */
-  --accent: #b8866e;
   --accent-hover: #d4a088;
   --accent-dim: #8a6050;
   --accent-deep: #6b473a;
   --accent-glow: rgba(184, 134, 110, 0.12);
   --accent-glow-strong: rgba(184, 134, 110, 0.22);
-
-  /* Message bubbles */
   --user-msg: #12101a;
   --ai-msg: #0e0c14;
-
-  /* Input */
   --input-bg: #0c0b12;
   --input-border: #1e1a24;
   --input-focus: #2a2030;
-
-  /* Tabs */
   --tab-active: #b8866e;
   --tab-inactive: #504858;
-
-  /* Scrollbar */
   --scrollbar-bg: #090910;
   --scrollbar-thumb: #1c1a24;
-
-  /* Matte surfaces */
   --surface-matte: #0a0a10;
   --surface-glass: rgba(12, 11, 18, 0.85);
   --surface-glossy: linear-gradient(145deg, #111118 0%, #0a0a10 50%, #080810 100%);
-
-  /* Text variants */
   --text-primary: #ede8e0;
   --text-secondary: #9890a0;
   --text-muted: #58505e;
-
-  /* 3D shadow layers — deeper for embossed look */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
   --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --shadow-glow: 0 0 20px rgba(184, 134, 110, 0.08), 0 0 40px rgba(184, 134, 110, 0.04);
   --shadow-inset: inset 0 2px 6px rgba(0, 0, 0, 0.6);
   --shadow-emboss: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  /* shadcn sidebar (unused but required) */
+  --sidebar: #0b0b10;
+  --sidebar-foreground: #ede8e0;
+  --sidebar-primary: #b8866e;
+  --sidebar-primary-foreground: #07070a;
+  --sidebar-accent: #161620;
+  --sidebar-accent-foreground: #ede8e0;
+  --sidebar-border: #1c1a20;
+  --sidebar-ring: #b8866e;
+
+  /* Chart colors */
+  --chart-1: #b8866e;
+  --chart-2: #d4a088;
+  --chart-3: #8a6050;
+  --chart-4: #6b473a;
+  --chart-5: #3d2a22;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius: var(----radius);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dim);
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
 
 /* Sandpack overrides */
 .sp-wrapper { height: 100% !important; }
@@ -115,24 +169,17 @@ body {
 }
 
 /* Bronze glow effect */
-.bronze-glow {
-  box-shadow: var(--shadow-glow);
-}
+.bronze-glow { box-shadow: var(--shadow-glow); }
 
 /* Matte surface */
-.matte-surface {
-  background: var(--surface-matte);
-  box-shadow: var(--shadow-inset);
-}
+.matte-surface { background: var(--surface-matte); box-shadow: var(--shadow-inset); }
 
 /* Subtle pulse for generating state */
 @keyframes subtlePulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
-.animate-subtle-pulse {
-  animation: subtlePulse 2s ease-in-out infinite;
-}
+.animate-subtle-pulse { animation: subtlePulse 2s ease-in-out infinite; }
 
 /* Bronze shimmer text */
 @keyframes shimmer {
@@ -140,14 +187,7 @@ body {
   100% { background-position: 200% center; }
 }
 .text-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--accent-deep) 0%,
-    var(--accent) 25%,
-    var(--accent-hover) 50%,
-    var(--accent) 75%,
-    var(--accent-deep) 100%
-  );
+  background: linear-gradient(90deg, var(--accent-deep) 0%, #b8866e 25%, var(--accent-hover) 50%, #b8866e 75%, var(--accent-deep) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -156,13 +196,8 @@ body {
 }
 
 /* Resize handle */
-.resize-handle {
-  background: var(--panel-border);
-  transition: background 0.3s ease;
-}
-.resize-handle:hover {
-  background: var(--accent-dim);
-}
+.resize-handle { background: var(--panel-border); transition: background 0.3s ease; }
+.resize-handle:hover { background: var(--accent-dim); }
 
 /* Embossed plate effect — mirrors the logo style */
 .embossed-plate {
