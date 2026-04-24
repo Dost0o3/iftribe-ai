@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { InfiniteGrid } from "@/components/ui/the-infinite-grid";
 import { cn } from "@/lib/utils";
 import type { Message, Framework, ProjectTemplate } from "@/lib/types";
 
@@ -132,7 +133,8 @@ export default function ChatPanel({
       <ScrollArea className="flex-1 px-4 py-4">
         <div className="space-y-4">
           {messages.length === 0 && !isGenerating && (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+            <InfiniteGrid className="min-h-[50vh] flex items-center justify-center rounded-xl">
+            <div className="flex flex-col items-center justify-center text-center px-4">
               <div
                 className="mb-5 bronze-glow rounded-xl overflow-hidden"
                 style={{ boxShadow: "var(--shadow-lg), var(--shadow-glow)" }}
@@ -170,6 +172,7 @@ export default function ChatPanel({
                 ))}
               </div>
             </div>
+            </InfiniteGrid>
           )}
 
           {messages.map((msg) => (

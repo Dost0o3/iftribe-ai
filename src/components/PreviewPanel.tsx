@@ -6,6 +6,9 @@ import {
 } from "@codesandbox/sandpack-react";
 import { Eye, RefreshCw, Monitor } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { InfiniteGrid } from "@/components/ui/the-infinite-grid";
 
 interface PreviewPanelProps {
   files: Record<string, string>;
@@ -18,37 +21,22 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
 
   if (!hasFiles) {
     return (
-      <div
-        className="flex flex-col h-full items-center justify-center"
-        style={{ background: "var(--surface-matte)" }}
-      >
-        <div
-          className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4"
-          style={{
-            background: "var(--accent-glow)",
-            border: "1px solid var(--panel-border)",
-            boxShadow: "var(--shadow-lg)",
-          }}
-        >
-          <Monitor size={32} style={{ color: "var(--accent-dim)" }} />
+      <InfiniteGrid className="flex flex-col h-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4 bg-primary/5 border border-primary/20 shadow-lg">
+            <Monitor size={32} className="text-primary/40" />
+          </div>
+          <p className="text-sm font-semibold text-muted-foreground">
+            Preview will appear here
+          </p>
+          <p className="text-xs mt-1.5 text-muted-foreground/70">
+            Start a conversation to generate an app
+          </p>
+          <Badge variant="outline" className="mt-4 text-[10px] tracking-[0.2em] uppercase font-semibold border-primary/30 text-primary/60">
+            Awaiting orders
+          </Badge>
         </div>
-        <p className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
-          Preview will appear here
-        </p>
-        <p className="text-xs mt-1.5" style={{ color: "var(--text-muted)" }}>
-          Start a conversation to generate an app
-        </p>
-        <div
-          className="mt-4 px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase font-semibold"
-          style={{
-            background: "var(--accent-glow)",
-            color: "var(--accent-dim)",
-            border: "1px solid var(--panel-border)",
-          }}
-        >
-          Awaiting orders
-        </div>
-      </div>
+      </InfiniteGrid>
     );
   }
 
@@ -67,24 +55,12 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
   }
 
   return (
-    <div
-      className="flex flex-col h-full"
-      style={{ background: "var(--surface-matte)" }}
-    >
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div
-        className="flex items-center justify-between px-4 py-2"
-        style={{
-          borderBottom: "1px solid var(--panel-border)",
-          background: "var(--panel-bg-elevated)",
-        }}
-      >
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card">
         <div className="flex items-center gap-2">
-          <Eye size={13} style={{ color: "var(--accent)" }} />
-          <span
-            className="text-[10px] font-bold tracking-[0.15em] uppercase"
-            style={{ color: "var(--text-secondary)" }}
-          >
+          <Eye size={13} className="text-primary" />
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
             Live Preview
           </span>
           <div
@@ -95,17 +71,15 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
             }}
           />
         </div>
-        <button
+        <Button
+          variant="ghost"
+          size="icon-xs"
           onClick={() => setKey((k) => k + 1)}
-          className="p-1.5 rounded-md transition-all cursor-pointer btn-3d"
-          style={{
-            color: "var(--text-muted)",
-            background: "var(--panel-bg)",
-          }}
           title="Refresh preview"
+          className="text-muted-foreground"
         >
           <RefreshCw size={12} />
-        </button>
+        </Button>
       </div>
 
       {/* Preview */}
