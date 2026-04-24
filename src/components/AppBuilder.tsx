@@ -6,7 +6,7 @@ import {
   Group as PanelGroup,
   Separator as PanelResizeHandle,
 } from "react-resizable-panels";
-import { Code, Eye, FolderTree } from "lucide-react";
+import { Code, Eye, FolderTree, Crown, Gem, Shield } from "lucide-react";
 import ChatPanel from "./ChatPanel";
 import FileExplorer from "./FileExplorer";
 import CodeEditor from "./CodeEditor";
@@ -51,9 +51,7 @@ export default function AppBuilder() {
 
         if (!res.ok) {
           const errData = await res.json();
-          throw new Error(
-            errData.error ?? `HTTP ${res.status}`
-          );
+          throw new Error(errData.error ?? `HTTP ${res.status}`);
         }
 
         const reader = res.body?.getReader();
@@ -86,11 +84,7 @@ export default function AppBuilder() {
                 throw new Error(chunk.error ?? "Generation failed");
               }
             } catch (parseErr) {
-              if (
-                parseErr instanceof SyntaxError
-              ) {
-                continue;
-              }
+              if (parseErr instanceof SyntaxError) continue;
               throw parseErr;
             }
           }
@@ -140,33 +134,67 @@ export default function AppBuilder() {
     setFiles((prev) => ({ ...prev, [path]: content }));
   }
 
+  const fileCount = Object.keys(files).length;
+
   return (
     <div className="h-screen flex flex-col" style={{ background: "var(--background)" }}>
-      {/* Top Bar */}
+      {/* Top Bar - Mafia style header */}
       <header
-        className="flex items-center justify-between px-4 py-2 border-b"
+        className="flex items-center justify-between px-5 py-2.5"
         style={{
-          borderColor: "var(--panel-border)",
-          background: "var(--panel-bg)",
+          background: "linear-gradient(180deg, var(--panel-bg-elevated) 0%, var(--panel-bg) 100%)",
+          borderBottom: "1px solid var(--panel-border)",
+          boxShadow: "var(--shadow-md)",
         }}
       >
         <div className="flex items-center gap-3">
+          {/* 3D Logo */}
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm text-white"
-            style={{ background: "var(--accent)" }}
+            className="w-9 h-9 rounded-lg flex items-center justify-center btn-3d"
+            style={{
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+              boxShadow: "var(--shadow-glow), var(--shadow-md)",
+            }}
           >
-            IF
+            <Crown size={18} className="text-black" strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-base">
-            IFTribe<span style={{ color: "var(--accent)" }}>.AI</span>
-          </span>
+          <div className="flex flex-col">
+            <span className="font-bold text-base tracking-wide text-shimmer">
+              IFTribe.AI
+            </span>
+            <span className="text-[10px] tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>
+              App Builder
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-xs" style={{ color: "var(--tab-inactive)" }}>
-          <span>
-            {Object.keys(files).length > 0
-              ? `${Object.keys(files).length} file(s)`
-              : "No project"}
-          </span>
+
+        <div className="flex items-center gap-4">
+          {fileCount > 0 && (
+            <div
+              className="flex items-center gap-2 px-3 py-1 rounded-md"
+              style={{
+                background: "var(--accent-glow)",
+                border: "1px solid var(--accent-dim)",
+              }}
+            >
+              <Gem size={12} style={{ color: "var(--accent)" }} />
+              <span className="text-xs font-medium" style={{ color: "var(--accent)" }}>
+                {fileCount} file{fileCount !== 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
+          <div
+            className="flex items-center gap-1.5 px-3 py-1 rounded-md"
+            style={{
+              background: "var(--surface-matte)",
+              border: "1px solid var(--panel-border)",
+            }}
+          >
+            <Shield size={11} style={{ color: "var(--accent-dim)" }} />
+            <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+              Powered by Claude
+            </span>
+          </div>
         </div>
       </header>
 
@@ -182,29 +210,29 @@ export default function AppBuilder() {
           />
         </Panel>
 
-        <PanelResizeHandle
-          className="w-1 transition-colors"
-          style={{ background: "var(--panel-border)" }}
-        />
+        <PanelResizeHandle className="w-1 resize-handle" />
 
         {/* Right: Preview + Code */}
         <Panel defaultSize={70} minSize={30}>
           <div className="flex flex-col h-full">
-            {/* Tabs */}
+            {/* Tabs - 3D styled */}
             <div
-              className="flex items-center gap-0 border-b"
+              className="flex items-center gap-0"
               style={{
-                borderColor: "var(--panel-border)",
                 background: "var(--panel-bg)",
+                borderBottom: "1px solid var(--panel-border)",
               }}
             >
               <button
                 onClick={() => setRightTab("preview")}
-                className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-wide uppercase transition-all cursor-pointer"
                 style={{
                   color: rightTab === "preview" ? "var(--accent)" : "var(--tab-inactive)",
-                  borderBottom:
-                    rightTab === "preview" ? "2px solid var(--accent)" : "2px solid transparent",
+                  borderBottom: rightTab === "preview"
+                    ? "2px solid var(--accent)"
+                    : "2px solid transparent",
+                  background: rightTab === "preview" ? "var(--accent-glow)" : "transparent",
+                  textShadow: rightTab === "preview" ? "0 0 10px rgba(201,168,76,0.3)" : "none",
                 }}
               >
                 <Eye size={14} />
@@ -212,11 +240,14 @@ export default function AppBuilder() {
               </button>
               <button
                 onClick={() => setRightTab("code")}
-                className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 text-xs font-semibold tracking-wide uppercase transition-all cursor-pointer"
                 style={{
                   color: rightTab === "code" ? "var(--accent)" : "var(--tab-inactive)",
-                  borderBottom:
-                    rightTab === "code" ? "2px solid var(--accent)" : "2px solid transparent",
+                  borderBottom: rightTab === "code"
+                    ? "2px solid var(--accent)"
+                    : "2px solid transparent",
+                  background: rightTab === "code" ? "var(--accent-glow)" : "transparent",
+                  textShadow: rightTab === "code" ? "0 0 10px rgba(201,168,76,0.3)" : "none",
                 }}
               >
                 <Code size={14} />
@@ -233,18 +264,26 @@ export default function AppBuilder() {
                   {/* File Explorer */}
                   <Panel defaultSize={25} minSize={15}>
                     <div
-                      className="h-full border-r overflow-y-auto"
+                      className="h-full overflow-y-auto"
                       style={{
-                        borderColor: "var(--panel-border)",
                         background: "var(--panel-bg)",
+                        borderRight: "1px solid var(--panel-border)",
                       }}
                     >
                       <div
-                        className="flex items-center gap-2 px-3 py-2 border-b"
-                        style={{ borderColor: "var(--panel-border)" }}
+                        className="flex items-center gap-2 px-3 py-2.5"
+                        style={{
+                          borderBottom: "1px solid var(--panel-border)",
+                          background: "var(--panel-bg-elevated)",
+                        }}
                       >
                         <FolderTree size={13} style={{ color: "var(--accent)" }} />
-                        <span className="text-xs font-semibold">Files</span>
+                        <span
+                          className="text-[10px] font-bold tracking-[0.15em] uppercase"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
+                          Files
+                        </span>
                       </div>
                       <FileExplorer
                         files={files}
@@ -254,10 +293,7 @@ export default function AppBuilder() {
                     </div>
                   </Panel>
 
-                  <PanelResizeHandle
-                    className="w-1 transition-colors"
-                    style={{ background: "var(--panel-border)" }}
-                  />
+                  <PanelResizeHandle className="w-1 resize-handle" />
 
                   {/* Code Editor */}
                   <Panel defaultSize={75} minSize={30}>
@@ -270,17 +306,19 @@ export default function AppBuilder() {
                     ) : (
                       <div
                         className="flex flex-col items-center justify-center h-full"
-                        style={{ background: "#1e1e1e" }}
+                        style={{ background: "var(--surface-matte)" }}
                       >
-                        <Code
-                          size={32}
-                          className="mb-3"
-                          style={{ color: "var(--tab-inactive)" }}
-                        />
-                        <p
-                          className="text-sm"
-                          style={{ color: "var(--tab-inactive)" }}
+                        <div
+                          className="w-16 h-16 rounded-xl flex items-center justify-center mb-4"
+                          style={{
+                            background: "var(--accent-glow)",
+                            border: "1px solid var(--panel-border)",
+                            boxShadow: "var(--shadow-md)",
+                          }}
                         >
+                          <Code size={24} style={{ color: "var(--accent-dim)" }} />
+                        </div>
+                        <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>
                           Select a file to edit
                         </p>
                       </div>

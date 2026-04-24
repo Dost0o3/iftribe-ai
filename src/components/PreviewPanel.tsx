@@ -4,7 +4,7 @@ import {
   SandpackProvider,
   SandpackPreview,
 } from "@codesandbox/sandpack-react";
-import { Eye, RefreshCw } from "lucide-react";
+import { Eye, RefreshCw, Monitor } from "lucide-react";
 import { useState } from "react";
 
 interface PreviewPanelProps {
@@ -20,19 +20,34 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
     return (
       <div
         className="flex flex-col h-full items-center justify-center"
-        style={{ background: "var(--panel-bg)" }}
+        style={{ background: "var(--surface-matte)" }}
       >
-        <Eye
-          size={32}
-          className="mb-3"
-          style={{ color: "var(--tab-inactive)" }}
-        />
-        <p className="text-sm" style={{ color: "var(--tab-inactive)" }}>
+        <div
+          className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4"
+          style={{
+            background: "var(--accent-glow)",
+            border: "1px solid var(--panel-border)",
+            boxShadow: "var(--shadow-lg)",
+          }}
+        >
+          <Monitor size={32} style={{ color: "var(--accent-dim)" }} />
+        </div>
+        <p className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
           Preview will appear here
         </p>
-        <p className="text-xs mt-1" style={{ color: "var(--tab-inactive)" }}>
+        <p className="text-xs mt-1.5" style={{ color: "var(--text-muted)" }}>
           Start a conversation to generate an app
         </p>
+        <div
+          className="mt-4 px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase font-semibold"
+          style={{
+            background: "var(--accent-glow)",
+            color: "var(--accent-dim)",
+            border: "1px solid var(--panel-border)",
+          }}
+        >
+          Awaiting orders
+        </div>
       </div>
     );
   }
@@ -54,24 +69,42 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
   return (
     <div
       className="flex flex-col h-full"
-      style={{ background: "var(--panel-bg)" }}
+      style={{ background: "var(--surface-matte)" }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-2 border-b"
-        style={{ borderColor: "var(--panel-border)" }}
+        className="flex items-center justify-between px-4 py-2"
+        style={{
+          borderBottom: "1px solid var(--panel-border)",
+          background: "var(--panel-bg-elevated)",
+        }}
       >
         <div className="flex items-center gap-2">
-          <Eye size={14} style={{ color: "var(--accent)" }} />
-          <span className="text-xs font-semibold">Live Preview</span>
+          <Eye size={13} style={{ color: "var(--accent)" }} />
+          <span
+            className="text-[10px] font-bold tracking-[0.15em] uppercase"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Live Preview
+          </span>
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{
+              background: "#4ade80",
+              boxShadow: "0 0 6px rgba(74, 222, 128, 0.5)",
+            }}
+          />
         </div>
         <button
           onClick={() => setKey((k) => k + 1)}
-          className="p-1.5 rounded transition-colors cursor-pointer"
-          style={{ color: "var(--tab-inactive)" }}
+          className="p-1.5 rounded-md transition-all cursor-pointer btn-3d"
+          style={{
+            color: "var(--text-muted)",
+            background: "var(--panel-bg)",
+          }}
           title="Refresh preview"
         >
-          <RefreshCw size={13} />
+          <RefreshCw size={12} />
         </button>
       </div>
 

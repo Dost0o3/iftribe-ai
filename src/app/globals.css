@@ -1,20 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --panel-bg: #111111;
-  --panel-border: #2a2a2a;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --user-msg: #1e1e2e;
-  --ai-msg: #161622;
-  --input-bg: #1a1a2e;
-  --input-border: #333355;
-  --tab-active: #6366f1;
-  --tab-inactive: #888;
-  --scrollbar-bg: #1a1a1a;
-  --scrollbar-thumb: #333;
+  /* Mafia Dark Matte Palette */
+  --background: #08080c;
+  --foreground: #e8e4dd;
+  --panel-bg: #0d0d14;
+  --panel-bg-elevated: #111119;
+  --panel-border: #1a1a28;
+  --panel-border-glow: #2a2035;
+
+  /* Gold / Amber accents */
+  --accent: #c9a84c;
+  --accent-hover: #ddbf5f;
+  --accent-dim: #8b7432;
+  --accent-glow: rgba(201, 168, 76, 0.15);
+  --accent-glow-strong: rgba(201, 168, 76, 0.25);
+
+  /* Message bubbles */
+  --user-msg: #141420;
+  --ai-msg: #0f0f1a;
+
+  /* Input */
+  --input-bg: #0e0e18;
+  --input-border: #1e1e30;
+  --input-focus: #2a2040;
+
+  /* Tabs */
+  --tab-active: #c9a84c;
+  --tab-inactive: #5a5670;
+
+  /* Scrollbar */
+  --scrollbar-bg: #0a0a10;
+  --scrollbar-thumb: #1e1e2e;
+
+  /* Matte surface */
+  --surface-matte: #0c0c14;
+  --surface-glass: rgba(14, 14, 24, 0.8);
+
+  /* Text variants */
+  --text-primary: #e8e4dd;
+  --text-secondary: #9992a8;
+  --text-muted: #5a5670;
+
+  /* 3D shadow layers */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-glow: 0 0 20px rgba(201, 168, 76, 0.1), 0 0 40px rgba(201, 168, 76, 0.05);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
@@ -32,8 +65,8 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--scrollbar-bg);
@@ -41,6 +74,9 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
 }
 
 /* Sandpack overrides */
@@ -60,4 +96,84 @@ body {
 }
 .sp-preview iframe {
   height: 100% !important;
+}
+
+/* 3D Button base */
+.btn-3d {
+  position: relative;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.btn-3d:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+.btn-3d:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Glass panel */
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Gold glow effect */
+.gold-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Matte surface */
+.matte-surface {
+  background: var(--surface-matte);
+  box-shadow: var(--shadow-inset);
+}
+
+/* Animated gold border */
+@keyframes borderGlow {
+  0%, 100% { border-color: var(--panel-border); }
+  50% { border-color: var(--accent-dim); }
+}
+
+/* Subtle pulse for generating state */
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-subtle-pulse {
+  animation: subtlePulse 2s ease-in-out infinite;
+}
+
+/* Text shimmer for branding */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--accent-dim) 0%,
+    var(--accent) 25%,
+    var(--accent-hover) 50%,
+    var(--accent) 75%,
+    var(--accent-dim) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Resize handle styling */
+.resize-handle {
+  background: var(--panel-border);
+  transition: background 0.2s ease;
+}
+.resize-handle:hover {
+  background: var(--accent-dim);
 }

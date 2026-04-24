@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2, Crown, Zap, Briefcase } from "lucide-react";
 import type { Message } from "@/lib/types";
 
 interface ChatPanelProps {
@@ -55,47 +55,82 @@ export default function ChatPanel({
     <div className="flex flex-col h-full" style={{ background: "var(--panel-bg)" }}>
       {/* Header */}
       <div
-        className="flex items-center gap-2 px-4 py-3 border-b"
-        style={{ borderColor: "var(--panel-border)" }}
+        className="flex items-center gap-2.5 px-4 py-3"
+        style={{
+          background: "linear-gradient(180deg, var(--panel-bg-elevated) 0%, var(--panel-bg) 100%)",
+          borderBottom: "1px solid var(--panel-border)",
+          boxShadow: "var(--shadow-sm)",
+        }}
       >
-        <Sparkles size={18} style={{ color: "var(--accent)" }} />
-        <span className="font-semibold text-sm">Chat</span>
+        <div
+          className="w-6 h-6 rounded-md flex items-center justify-center"
+          style={{
+            background: "var(--accent-glow)",
+            border: "1px solid var(--accent-dim)",
+          }}
+        >
+          <Briefcase size={12} style={{ color: "var(--accent)" }} />
+        </div>
+        <span
+          className="font-bold text-xs tracking-[0.15em] uppercase"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          Command Center
+        </span>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && !isGenerating && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
+            {/* 3D Crown Logo */}
             <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-              style={{ background: "var(--accent)" }}
+              className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5 gold-glow"
+              style={{
+                background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+                boxShadow: "var(--shadow-lg), var(--shadow-glow)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
             >
-              <Sparkles size={28} className="text-white" />
+              <Crown size={36} className="text-black" strokeWidth={2} />
             </div>
-            <h2 className="text-xl font-bold mb-2">Welcome to IFTribe.AI</h2>
-            <p className="text-sm" style={{ color: "var(--tab-inactive)" }}>
-              Describe the app you want to build and I&apos;ll generate it for you
-              with a live preview.
+            <h2
+              className="text-xl font-bold mb-1 tracking-wide text-shimmer"
+            >
+              IFTribe.AI
+            </h2>
+            <p
+              className="text-[10px] tracking-[0.3em] uppercase mb-1 font-semibold"
+              style={{ color: "var(--accent-dim)" }}
+            >
+              The Don of App Building
             </p>
-            <div className="mt-6 space-y-2 w-full max-w-sm">
+            <p className="text-sm mt-2 max-w-xs" style={{ color: "var(--text-muted)" }}>
+              Make an offer I can&apos;t refuse — describe the app you want built.
+            </p>
+
+            {/* Suggestion cards with 3D effect */}
+            <div className="mt-6 space-y-2.5 w-full max-w-sm">
               {[
-                "Build a todo app with drag and drop",
-                "Create a weather dashboard",
-                "Make a calculator with history",
+                { icon: "⚡", text: "Build a todo app with drag and drop" },
+                { icon: "🌤", text: "Create a weather dashboard" },
+                { icon: "🧮", text: "Make a calculator with history" },
               ].map((suggestion) => (
                 <button
-                  key={suggestion}
+                  key={suggestion.text}
                   onClick={() => {
-                    setInput(suggestion);
+                    setInput(suggestion.text);
                     textareaRef.current?.focus();
                   }}
-                  className="w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 text-left px-4 py-3 rounded-xl text-sm transition-all cursor-pointer btn-3d"
                   style={{
-                    background: "var(--input-bg)",
-                    border: "1px solid var(--input-border)",
+                    background: "linear-gradient(135deg, var(--input-bg) 0%, var(--panel-bg-elevated) 100%)",
+                    border: "1px solid var(--panel-border)",
+                    color: "var(--text-secondary)",
                   }}
                 >
-                  {suggestion}
+                  <span className="text-base">{suggestion.icon}</span>
+                  <span>{suggestion.text}</span>
                 </button>
               ))}
             </div>
@@ -103,25 +138,44 @@ export default function ChatPanel({
         )}
 
         {messages.map((msg) => (
-          <div key={msg.id} className="flex flex-col gap-1">
+          <div key={msg.id} className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
+              {msg.role === "user" ? (
+                <div
+                  className="w-5 h-5 rounded flex items-center justify-center"
+                  style={{
+                    background: "var(--accent-glow)",
+                    border: "1px solid var(--accent-dim)",
+                  }}
+                >
+                  <Zap size={10} style={{ color: "var(--accent)" }} />
+                </div>
+              ) : (
+                <div
+                  className="w-5 h-5 rounded flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+                  }}
+                >
+                  <Crown size={10} className="text-black" />
+                </div>
+              )}
               <span
-                className="text-xs font-medium"
+                className="text-[10px] font-bold tracking-[0.15em] uppercase"
                 style={{
-                  color:
-                    msg.role === "user"
-                      ? "var(--accent)"
-                      : "var(--accent-hover)",
+                  color: msg.role === "user" ? "var(--accent)" : "var(--accent-hover)",
                 }}
               >
                 {msg.role === "user" ? "You" : "IFTribe.AI"}
               </span>
             </div>
             <div
-              className="rounded-lg px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap"
+              className="rounded-xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap"
               style={{
-                background:
-                  msg.role === "user" ? "var(--user-msg)" : "var(--ai-msg)",
+                background: msg.role === "user" ? "var(--user-msg)" : "var(--ai-msg)",
+                border: "1px solid var(--panel-border)",
+                boxShadow: "var(--shadow-sm)",
+                color: "var(--text-primary)",
               }}
             >
               {msg.content}
@@ -130,40 +184,53 @@ export default function ChatPanel({
         ))}
 
         {isGenerating && streamingContent && (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
+              <div
+                className="w-5 h-5 rounded flex items-center justify-center animate-subtle-pulse"
+                style={{
+                  background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+                }}
+              >
+                <Crown size={10} className="text-black" />
+              </div>
               <span
-                className="text-xs font-medium"
+                className="text-[10px] font-bold tracking-[0.15em] uppercase"
                 style={{ color: "var(--accent-hover)" }}
               >
                 IFTribe.AI
               </span>
               <Loader2
-                size={12}
+                size={10}
                 className="animate-spin"
                 style={{ color: "var(--accent)" }}
               />
             </div>
             <div
-              className="rounded-lg px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap"
-              style={{ background: "var(--ai-msg)" }}
+              className="rounded-xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap"
+              style={{
+                background: "var(--ai-msg)",
+                border: "1px solid var(--panel-border)",
+                boxShadow: "var(--shadow-sm)",
+                color: "var(--text-primary)",
+              }}
             >
               {streamingContent.length > 200
-                ? "Generating code..."
+                ? "Forging your application..."
                 : streamingContent}
             </div>
           </div>
         )}
 
         {isGenerating && !streamingContent && (
-          <div className="flex items-center gap-2 px-4 py-3">
+          <div className="flex items-center gap-3 px-4 py-3">
             <Loader2
               size={16}
               className="animate-spin"
               style={{ color: "var(--accent)" }}
             />
-            <span className="text-sm" style={{ color: "var(--tab-inactive)" }}>
-              Thinking...
+            <span className="text-sm font-medium animate-subtle-pulse" style={{ color: "var(--accent-dim)" }}>
+              The family is working on it...
             </span>
           </div>
         )}
@@ -171,17 +238,18 @@ export default function ChatPanel({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input Area */}
       <form
         onSubmit={handleSubmit}
-        className="p-4 border-t"
-        style={{ borderColor: "var(--panel-border)" }}
+        className="p-4"
+        style={{ borderTop: "1px solid var(--panel-border)" }}
       >
         <div
-          className="flex items-end gap-2 rounded-xl p-2"
+          className="flex items-end gap-2 rounded-xl p-2 transition-all"
           style={{
             background: "var(--input-bg)",
             border: "1px solid var(--input-border)",
+            boxShadow: "var(--shadow-inset)",
           }}
         >
           <textarea
@@ -189,22 +257,26 @@ export default function ChatPanel({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Describe the app you want to build..."
+            placeholder="Make me an offer... describe your app"
             rows={1}
-            className="flex-1 bg-transparent text-sm resize-none outline-none placeholder-gray-500 px-2 py-1.5"
-            style={{ color: "var(--foreground)" }}
+            className="flex-1 bg-transparent text-sm resize-none outline-none px-2 py-1.5"
+            style={{
+              color: "var(--text-primary)",
+            }}
             disabled={isGenerating}
           />
           <button
             type="submit"
             disabled={!input.trim() || isGenerating}
-            className="p-2 rounded-lg transition-colors disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
-            style={{ background: "var(--accent)" }}
+            className="p-2.5 rounded-lg transition-all disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed btn-3d"
+            style={{
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%)",
+            }}
           >
             {isGenerating ? (
-              <Loader2 size={16} className="animate-spin text-white" />
+              <Loader2 size={16} className="animate-spin text-black" />
             ) : (
-              <Send size={16} className="text-white" />
+              <Send size={16} className="text-black" />
             )}
           </button>
         </div>
