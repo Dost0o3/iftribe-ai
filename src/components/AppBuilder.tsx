@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { migrateModelId } from "@/lib/models";
 
 type RightTab = "preview" | "code";
 
@@ -114,7 +115,7 @@ export default function AppBuilder() {
         ? localStorage.getItem("iftribe_api_key") || undefined
         : undefined;
       const model = typeof window !== "undefined"
-        ? localStorage.getItem("iftribe_model") || undefined
+        ? migrateModelId(localStorage.getItem("iftribe_model")) || undefined
         : undefined;
       const maxTokens = typeof window !== "undefined"
         ? parseInt(localStorage.getItem("iftribe_max_tokens") || "16384")
