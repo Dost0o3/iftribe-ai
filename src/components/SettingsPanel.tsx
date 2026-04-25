@@ -13,15 +13,15 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
-const DEFAULT_MODEL = "anthropic/claude-sonnet-4";
+const DEFAULT_MODEL = "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8";
 
 const MODELS = [
-  { id: "anthropic/claude-sonnet-4", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
-  { id: "anthropic/claude-opus-4", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
-  { id: "anthropic/claude-3.5-haiku", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
-  { id: "openai/gpt-4o", name: "GPT-4o", badge: "OpenAI", speed: "Fast" },
-  { id: "google/gemini-2.5-pro", name: "Gemini 2.5 Pro", badge: "Google", speed: "Fast" },
-  { id: "deepseek/deepseek-chat-v3-0324", name: "DeepSeek V3", badge: "Budget", speed: "Ultra Fast" },
+  { id: "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8", name: "Qwen 3 Coder 480B", badge: "Recommended", speed: "Fast" },
+  { id: "openai/gpt-oss-120b", name: "GPT OSS 120B", badge: "Most Capable", speed: "Fast" },
+  { id: "Qwen/Qwen3-235B-A22B-Thinking-2507", name: "Qwen 3 235B Thinking", badge: "Reasoning", speed: "Fast" },
+  { id: "meta-llama/Llama-3.3-70B-Instruct-Turbo", name: "Meta Llama 3.3 70B", badge: "Free", speed: "Fast" },
+  { id: "OpenAI/gpt-oss-20B", name: "GPT OSS 20B", badge: "Free", speed: "Ultra Fast" },
+  { id: "trinity-mini", name: "Trinity Mini", badge: "Free", speed: "Ultra Fast" },
 ];
 
 const MODEL_IDS = new Set(MODELS.map((m) => m.id));
@@ -29,11 +29,10 @@ const MODEL_IDS = new Set(MODELS.map((m) => m.id));
 function migrateModelId(stored: string | null): string {
   if (!stored) return DEFAULT_MODEL;
   if (MODEL_IDS.has(stored)) return stored;
-  if (!stored.includes("/")) {
-    const prefixed = `anthropic/${stored}`;
-    if (MODEL_IDS.has(prefixed)) {
-      localStorage.setItem("iftribe_model", prefixed);
-      return prefixed;
+  for (const m of MODELS) {
+    if (m.id.endsWith(stored) || m.name.toLowerCase().includes(stored.toLowerCase())) {
+      localStorage.setItem("iftribe_model", m.id);
+      return m.id;
     }
   }
   localStorage.setItem("iftribe_model", DEFAULT_MODEL);
@@ -66,7 +65,7 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
     localStorage.removeItem("iftribe_max_tokens");
     localStorage.removeItem("iftribe_projects");
     setApiKey("");
-    setSelectedModel("anthropic/claude-sonnet-4");
+    setSelectedModel(DEFAULT_MODEL);
     setMaxTokens(16384);
   }
 
@@ -98,14 +97,14 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
             <label className="flex items-center gap-2">
               <Key size={12} className="text-primary" />
               <span className="text-xs font-bold tracking-[0.1em] uppercase text-muted-foreground">
-                OpenRouter API Key
+                Clod.io API Key
               </span>
             </label>
             <Input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-or-v1-..."
+              placeholder="Your Clod.io API key..."
               className="bg-secondary border-border/50 text-foreground placeholder:text-muted-foreground/50"
             />
             <p className="text-[10px] text-muted-foreground/70">

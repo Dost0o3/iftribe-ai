@@ -423,7 +423,7 @@ export default function AppBuilder() {
             <Badge variant="secondary" className="gap-1.5">
               <Shield size={10} className="text-muted-foreground" />
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                via OpenRouter
+                via Clod.io
               </span>
             </Badge>
           </div>

@@ -23,10 +23,10 @@ export async function POST(request: Request) {
     maxTokens?: number;
   };
 
-  const apiKey = clientApiKey || process.env.OPENROUTER_API_KEY;
+  const apiKey = clientApiKey || process.env.CLOD_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "No API key configured. Go to Settings and add your OpenRouter API key, or set OPENROUTER_API_KEY in .env.local" },
+      { error: "No API key configured. Go to Settings and add your Clod.io API key, or set CLOD_API_KEY in .env.local" },
       { status: 500 }
     );
   }
@@ -35,10 +35,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
 
-  let model = clientModel || "anthropic/claude-sonnet-4";
-  if (model && !model.includes("/")) {
-    model = `anthropic/${model}`;
-  }
+  const model = clientModel || "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8";
   const maxTokens = clientMaxTokens || 16384;
   const systemPrompt = buildSystemPrompt(framework, template);
 
@@ -57,17 +54,15 @@ export async function POST(request: Request) {
     content: buildUserPrompt(message, existingFiles),
   });
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetch("https://api.clod.io/v1/chat/completions", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://iftribe.ai",
-      "X-Title": "IFTribe.AI",
     },
     body: JSON.stringify({
       model,
-      max_tokens: maxTokens,
+      max_completion_tokens: maxTokens,
       stream: true,
       messages,
     }),
@@ -76,7 +71,7 @@ export async function POST(request: Request) {
   if (!response.ok) {
     const errorText = await response.text();
     return Response.json(
-      { error: `OpenRouter API error: ${response.status} - ${errorText}` },
+      { error: `Clod.io API error: ${response.status} - ${errorText}` },
       { status: response.status }
     );
   }
