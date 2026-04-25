@@ -354,8 +354,8 @@ export function SpiralAnimation() {
         canvas.width = size * dpr
         canvas.height = size * dpr
 
-        canvas.style.width = `${dimensions.width}px`
-        canvas.style.height = `${dimensions.height}px`
+        canvas.style.width = `${size}px`
+        canvas.style.height = `${size}px`
 
         ctx.scale(dpr, dpr)
 
@@ -370,10 +370,10 @@ export function SpiralAnimation() {
     }, [dimensions])
 
     return (
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full overflow-hidden">
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 w-full h-full"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             />
         </div>
     )
