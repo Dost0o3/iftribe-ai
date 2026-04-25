@@ -1,4 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
 import type { Framework, ProjectTemplate } from "@/lib/types";
 
@@ -24,10 +23,10 @@ export async function POST(request: Request) {
     maxTokens?: number;
   };
 
-  const apiKey = clientApiKey || process.env.ANTHROPIC_API_KEY;
+  const apiKey = clientApiKey || process.env.CLOD_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "No API key configured. Go to Settings and add your Anthropic API key, or set ANTHROPIC_API_KEY in .env.local" },
+      { error: "No API key configured. Go to Settings and add your Clod.io API key, or set CLOD_API_KEY in .env.local" },
       { status: 500 }
     );
   }
@@ -36,20 +35,17 @@ export async function POST(request: Request) {
     return Response.json({ error: "Message is required" }, { status: 400 });
   }
 
-  const model = clientModel || "claude-sonnet-4-20250514";
+  const model = clientModel || "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8";
   const maxTokens = clientMaxTokens || 16384;
-
-  const client = new Anthropic({ apiKey });
   const systemPrompt = buildSystemPrompt(framework, template);
 
-  const messages: Anthropic.MessageParam[] = [];
+  const messages: Array<{ role: string; content: string }> = [
+    { role: "system", content: systemPrompt },
+  ];
 
   if (conversationHistory && conversationHistory.length > 0) {
     for (const msg of conversationHistory.slice(-8)) {
-      messages.push({
-        role: msg.role,
-        content: msg.content,
-      });
+      messages.push({ role: msg.role, content: msg.content });
     }
   }
 
@@ -58,36 +54,97 @@ export async function POST(request: Request) {
     content: buildUserPrompt(message, existingFiles),
   });
 
-  const stream = await client.messages.stream({
-    model,
-    max_tokens: maxTokens,
-    system: systemPrompt,
-    messages,
+  const response = await fetch("https://api.clod.io/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_completion_tokens: maxTokens,
+      stream: true,
+      messages,
+    }),
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    return Response.json(
+      { error: `Clod.io API error: ${response.status} - ${errorText}` },
+      { status: response.status }
+    );
+  }
 
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {
       try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            const chunk = `data: ${JSON.stringify({ type: "text", content: event.delta.text })}\n\n`;
-            controller.enqueue(encoder.encode(chunk));
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error("No response body");
+
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith("data: ")) continue;
+            const data = trimmed.slice(6);
+            if (data === "[DONE]") {
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`)
+              );
+              continue;
+            }
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                controller.enqueue(
+                  encoder.encode(`data: ${JSON.stringify({ type: "text", content })}\n\n`)
+                );
+              }
+            } catch {
+              // skip malformed chunks
+            }
           }
         }
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`)
-        );
+
+        if (buffer.trim()) {
+          const trimmed = buffer.trim();
+          if (trimmed.startsWith("data: ")) {
+            const data = trimmed.slice(6);
+            if (data === "[DONE]") {
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`)
+              );
+            } else {
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ type: "text", content })}\n\n`)
+                  );
+                }
+              } catch {
+                // skip malformed chunks
+              }
+            }
+          }
+        }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Unknown error";
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
         controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({ type: "error", error: errorMessage })}\n\n`
-          )
+          encoder.encode(`data: ${JSON.stringify({ type: "error", error: errorMessage })}\n\n`)
         );
       } finally {
         controller.close();

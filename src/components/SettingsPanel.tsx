@@ -8,23 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { DEFAULT_MODEL, MODELS, migrateModelId } from "@/lib/models";
 
 interface SettingsPanelProps {
   onClose: () => void;
 }
-
-const MODELS = [
-  { id: "claude-sonnet-4-20250514", name: "Claude Sonnet 4", badge: "Recommended", speed: "Fast" },
-  { id: "claude-opus-4-20250514", name: "Claude Opus 4", badge: "Most Capable", speed: "Slower" },
-  { id: "claude-3-5-haiku-20241022", name: "Claude 3.5 Haiku", badge: "Fastest", speed: "Ultra Fast" },
-];
 
 export default function SettingsPanel({ onClose }: SettingsPanelProps) {
   const [apiKey, setApiKey] = useState(() =>
     typeof window !== "undefined" ? localStorage.getItem("iftribe_api_key") ?? "" : ""
   );
   const [selectedModel, setSelectedModel] = useState(() =>
-    typeof window !== "undefined" ? localStorage.getItem("iftribe_model") ?? "claude-sonnet-4-20250514" : "claude-sonnet-4-20250514"
+    typeof window !== "undefined" ? migrateModelId(localStorage.getItem("iftribe_model")) : DEFAULT_MODEL
   );
   const [maxTokens, setMaxTokens] = useState(() =>
     typeof window !== "undefined" ? parseInt(localStorage.getItem("iftribe_max_tokens") ?? "16384") : 16384
@@ -45,7 +40,7 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
     localStorage.removeItem("iftribe_max_tokens");
     localStorage.removeItem("iftribe_projects");
     setApiKey("");
-    setSelectedModel("claude-sonnet-4-20250514");
+    setSelectedModel(DEFAULT_MODEL);
     setMaxTokens(16384);
   }
 
@@ -77,14 +72,14 @@ export default function SettingsPanel({ onClose }: SettingsPanelProps) {
             <label className="flex items-center gap-2">
               <Key size={12} className="text-primary" />
               <span className="text-xs font-bold tracking-[0.1em] uppercase text-muted-foreground">
-                Anthropic API Key
+                Clod.io API Key
               </span>
             </label>
             <Input
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-ant-..."
+              placeholder="Your Clod.io API key..."
               className="bg-secondary border-border/50 text-foreground placeholder:text-muted-foreground/50"
             />
             <p className="text-[10px] text-muted-foreground/70">

@@ -26,6 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { migrateModelId } from "@/lib/models";
+import { SpiralAnimation } from "@/components/ui/spiral-animation";
 
 type RightTab = "preview" | "code";
 
@@ -114,7 +116,7 @@ export default function AppBuilder() {
         ? localStorage.getItem("iftribe_api_key") || undefined
         : undefined;
       const model = typeof window !== "undefined"
-        ? localStorage.getItem("iftribe_model") || undefined
+        ? migrateModelId(localStorage.getItem("iftribe_model")) || undefined
         : undefined;
       const maxTokens = typeof window !== "undefined"
         ? parseInt(localStorage.getItem("iftribe_max_tokens") || "16384")
@@ -280,7 +282,12 @@ export default function AppBuilder() {
   const currentFramework = FRAMEWORKS.find((f) => f.id === framework);
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: "var(--background)" }}>
+    <div className="h-screen flex flex-col relative" style={{ background: "var(--background)" }}>
+      {/* Spiral Animation Background */}
+      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+        <SpiralAnimation />
+      </div>
+
       {showTemplateSelector && (
         <TemplateSelector
           onSelect={handleTemplateSelect}
@@ -348,7 +355,7 @@ export default function AppBuilder() {
       {/* Top Bar */}
       <TooltipProvider>
         <header
-          className="flex items-center justify-between px-5 py-2 border-b border-border"
+          className="flex items-center justify-between px-5 py-2 border-b border-border relative z-10"
           style={{
             background: "linear-gradient(180deg, var(--panel-bg-elevated) 0%, var(--panel-bg) 100%)",
             boxShadow: "var(--shadow-md)",
@@ -423,7 +430,7 @@ export default function AppBuilder() {
             <Badge variant="secondary" className="gap-1.5">
               <Shield size={10} className="text-muted-foreground" />
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Powered by Claude
+                via Clod.io
               </span>
             </Badge>
           </div>
@@ -431,7 +438,7 @@ export default function AppBuilder() {
       </TooltipProvider>
 
       {/* Main Content */}
-      <PanelGroup orientation="horizontal" className="flex-1">
+      <PanelGroup orientation="horizontal" className="flex-1 relative z-10">
         <Panel defaultSize={30} minSize={20}>
           <ChatPanel
             messages={messages}

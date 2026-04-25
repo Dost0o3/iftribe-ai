@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { SpiralAnimation } from "@/components/ui/spiral-animation";
 import { cn } from "@/lib/utils";
 import type { Message, Framework, ProjectTemplate } from "@/lib/types";
 
@@ -132,7 +133,9 @@ export default function ChatPanel({
       <ScrollArea className="flex-1 px-4 py-4">
         <div className="space-y-4">
           {messages.length === 0 && !isGenerating && (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+            <div className="relative min-h-[50vh] flex items-center justify-center rounded-xl overflow-hidden">
+            <div className="absolute inset-0 z-0 opacity-40 pointer-events-none"><SpiralAnimation /></div>
+            <div className="flex flex-col items-center justify-center text-center px-4 relative z-10">
               <div
                 className="mb-5 bronze-glow rounded-xl overflow-hidden"
                 style={{ boxShadow: "var(--shadow-lg), var(--shadow-glow)" }}
@@ -169,6 +172,7 @@ export default function ChatPanel({
                   </button>
                 ))}
               </div>
+            </div>
             </div>
           )}
 
