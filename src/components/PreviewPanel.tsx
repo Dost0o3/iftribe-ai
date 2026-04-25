@@ -8,7 +8,7 @@ import { Eye, RefreshCw, Monitor } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { InfiniteGrid } from "@/components/ui/the-infinite-grid";
+import { SpiralAnimation } from "@/components/ui/spiral-animation";
 
 interface PreviewPanelProps {
   files: Record<string, string>;
@@ -21,8 +21,9 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
 
   if (!hasFiles) {
     return (
-      <InfiniteGrid className="flex flex-col h-full items-center justify-center bg-background">
-        <div className="flex flex-col items-center">
+      <div className="relative flex flex-col h-full items-center justify-center bg-background overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none"><SpiralAnimation /></div>
+        <div className="flex flex-col items-center relative z-10">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4 bg-primary/5 border border-primary/20 shadow-lg">
             <Monitor size={32} className="text-primary/40" />
           </div>
@@ -36,7 +37,7 @@ export default function PreviewPanel({ files }: PreviewPanelProps) {
             Awaiting orders
           </Badge>
         </div>
-      </InfiniteGrid>
+      </div>
     );
   }
 
